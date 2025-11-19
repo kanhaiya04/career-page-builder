@@ -36,15 +36,11 @@ export const signupSchema = z.object({
     .min(6, "Passcode must be at least 6 characters"),
   headline: z
     .string()
-    .optional()
-    .default("Join our team and build with us."),
+    .optional(),
   subheadline: z
     .string()
-    .optional()
-    .default(
-      "Tell candidates why your company matters. You can customize this later."
-    ),
+    .optional(),
 });
 
-export type SignupInput = z.infer<typeof signupSchema>;
+export type SignupInput = z.input<typeof signupSchema>;
 

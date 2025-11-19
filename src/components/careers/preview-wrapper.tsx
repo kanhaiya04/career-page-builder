@@ -100,6 +100,8 @@ export function PreviewWrapper({
             logoUrl: unsavedTheme.theme.logoUrl || null,
             cultureVideoUrl: unsavedTheme.theme.cultureVideoUrl || null,
             eyebrow: unsavedTheme.theme.eyebrow || null,
+            createdAt: initialCompany.theme?.createdAt ?? new Date(),
+            updatedAt: initialCompany.theme?.updatedAt ?? new Date(),
           },
         };
         hasChanges = true;
