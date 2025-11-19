@@ -1,65 +1,94 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Palette, Sparkles, TabletSmartphone } from "lucide-react";
+
+const features = [
+  {
+    title: "Brand-grade theming",
+    description:
+      "Recruiters control colors, hero media, and culture stories without touching code.",
+    icon: Palette,
+  },
+  {
+    title: "Safe, structured edits",
+    description:
+      "Sections, jobs, and preview mode keep draft work separate until it’s ready.",
+    icon: Sparkles,
+  },
+  {
+    title: "Mobile-first candidate UX",
+    description:
+      "SEO-ready pages load fast and include filters so candidates can find roles quickly.",
+    icon: TabletSmartphone,
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-24 sm:pt-32 lg:gap-20 lg:px-10">
+      <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
+        <div className="space-y-6">
+          <p className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-100/70 px-4 py-1 text-sm font-medium text-emerald-800">
+            <Sparkles size={16} />
+            Recruiter + candidate friendly
           </p>
+          <h1 className="text-4xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-5xl">
+            Build careers pages that stay on-brand and convert curious candidates
+            into applicants.
+          </h1>
+          <p className="text-lg text-slate-600">
+            This reference implementation for the Whitecarrot ATS assignment
+            bundles a multi-tenant content model, recruiter editor, and a
+            delightful public browsing experience—ready to deploy on Vercel +
+            PostgreSQL.
+          </p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-white transition hover:bg-slate-800"
+            >
+              Enter recruiter console
+              <ArrowRight size={18} />
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-slate-800 transition hover:bg-slate-50"
+            >
+              Create a workspace
+            </Link>
+            <Link
+              href="/acme/careers"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 px-6 py-3 text-slate-800 transition hover:bg-slate-50"
+            >
+              View sample company
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="rounded-3xl border border-slate-200 bg-white/70 p-8 shadow-xl shadow-emerald-100">
+          <div className="space-y-4">
+            <p className="text-sm uppercase tracking-[0.2em] text-slate-500">
+              Why it matters
+            </p>
+            <ul className="space-y-6">
+              {features.map((feature) => (
+                <li
+                  key={feature.title}
+                  className="flex gap-4 rounded-2xl border border-emerald-100/70 bg-emerald-50/70 p-4"
+                >
+                  <feature.icon className="text-emerald-600" />
+                  <div>
+                    <h3 className="text-base font-semibold text-slate-900">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-slate-600">
+                      {feature.description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+      </section>
       </main>
-    </div>
   );
 }

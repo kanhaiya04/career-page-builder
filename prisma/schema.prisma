@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Company {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String      @unique
+  headline      String
+  subheadline   String?
+  story         String?
+  mission       String?
+  headquarters  String?
+  website       String?
+  sizeRange     String?
+  industries    String[]
+  perks         Json?
+  values        Json?
+  showSalary    Boolean     @default(true)
+  previewToken  String      @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  recruiters    Recruiter[]
+  sections      Section[]
+  jobs          Job[]
+  theme         Theme?
+
+  @@index([slug])
+}
+
+model Theme {
+  id               String   @id @default(cuid())
+  companyId        String   @unique
+  primaryColor     String   @default("#0f172a")
+  secondaryColor   String   @default("#10b981")
+  accentColor      String   @default("#fbbf24")
+  backgroundColor  String   @default("#f0fdfa")
+  heroBackground   String?
+  bannerImageUrl   String?
+  logoUrl          String?
+  cultureVideoUrl  String?
+  eyebrow          String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Section {
+  id          String      @id @default(cuid())
+  companyId   String
+  title       String
+  slug        String
+  summary     String?
+  content     String
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  company     Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, slug])
+  @@index([companyId, sortOrder])
+}
+
+model Job {
+  id             String          @id @default(cuid())
+  companyId      String
+  title          String
+  slug           String
+  location       String
+  jobType        JobType         @default(FULL_TIME)
+  workSetting    WorkSetting     @default(HYBRID)
+  description    String
+  applyUrl       String
+  status         JobStatus       @default(DRAFT)
+  tags           String[]
+  featured       Boolean         @default(false)
+  department     Department      @default(ENGINEERING)
+  experienceLevel ExperienceLevel @default(MID)
+  salaryRange    String
+  publishedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, slug])
+  @@index([companyId, status])
+  @@index([companyId, featured])
+}
+
+model Recruiter {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  role         RecruiterRole @default(EDITOR)
+  passcodeHash String
+  lastLoginAt  DateTime?
+  companyId    String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, role])
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+  TEMPORARY
+}
+
+enum WorkSetting {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum RecruiterRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum Department {
+  PRODUCT
+  CUSTOMER_SUCCESS
+  SALES
+  ENGINEERING
+  OPERATIONS
+  MARKETING
+  ANALYTICS
+  R_AND_D
+}
+
+enum ExperienceLevel {
+  JUNIOR
+  MID
+  SENIOR
+}
+
