@@ -1,4 +1,5 @@
 import { JobStatus, Prisma } from "@prisma/client";
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 
 const companySelect = Prisma.validator<Prisma.CompanyInclude>()({
@@ -14,7 +15,7 @@ const companySelect = Prisma.validator<Prisma.CompanyInclude>()({
   },
 });
 
-export async function getCompanyPublic(slug: string) {
+export const getCompanyPublic = cache(async (slug: string) => {
   return prisma.company.findUnique({
     where: { slug },
     include: {
@@ -31,12 +32,12 @@ export async function getCompanyPublic(slug: string) {
       },
     },
   });
-}
+});
 
-export async function getCompanyForEditor(slug: string) {
+export const getCompanyForEditor = cache(async (slug: string) => {
   return prisma.company.findUnique({
     where: { slug },
     include: companySelect,
   });
-}
+});
 

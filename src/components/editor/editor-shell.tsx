@@ -37,7 +37,6 @@ export function EditorShell({ company }: EditorShellProps) {
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
       <div className="space-y-6 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-lg">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="space-y-3">
@@ -83,7 +82,6 @@ export function EditorShell({ company }: EditorShellProps) {
           </Button>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-3">
           <Card className="border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 bg-white">
             <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">

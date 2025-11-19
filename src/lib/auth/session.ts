@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import type { RecruiterRole } from "@prisma/client";
 
 const SESSION_COOKIE = "career_session";
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 type SessionPayload = {
   recruiterId: string;

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { authorizeApiCompany } from "@/lib/auth/api";
 import { jobUpdateSchema } from "@/lib/validators/job";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string; jobId: string }>;
 };

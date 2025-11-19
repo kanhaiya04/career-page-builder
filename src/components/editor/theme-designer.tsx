@@ -24,7 +24,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-// Form values type (before zod transformations)
 type ThemeFormValues = {
   headline: string;
   subheadline?: string;
@@ -98,25 +97,20 @@ export function ThemeDesigner({
     },
   });
 
-  // Store form changes in localStorage without causing re-renders
-  // Using localStorage (not sessionStorage) so preview tabs can access the data even after refresh
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   
   useEffect(() => {
-    // Subscribe to form changes without causing re-renders
     const subscription = form.watch((values) => {
-      // Clear any pending saves
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
       
-      // Debounce the localStorage writes to prevent lag during color picker drag
       saveTimeoutRef.current = setTimeout(() => {
         const storageKey = `preview-theme-${slug}`;
         const sectionsKey = `preview-sections-${slug}`;
         localStorage.setItem(storageKey, JSON.stringify(values));
         localStorage.setItem(sectionsKey, JSON.stringify(localSections));
-      }, 150); // 150ms delay after user stops typing/dragging
+      }, 150);
     });
 
     return () => {
@@ -127,7 +121,6 @@ export function ThemeDesigner({
     };
   }, [form, localSections, slug]);
 
-  // Save sections to localStorage whenever they change
   useEffect(() => {
     const sectionsKey = `preview-sections-${slug}`;
     localStorage.setItem(sectionsKey, JSON.stringify(localSections));
@@ -136,77 +129,74 @@ export function ThemeDesigner({
   const onSubmit: SubmitHandler<ThemeFormValues> = (values) => {
     startTransition(async () => {
       try {
-        // Save theme
-        const themeResponse = await fetch(`/api/companies/${slug}/theme`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
-
-        const themeData = await themeResponse.json();
-        if (!themeResponse.ok) {
-          throw new Error(themeData.error ?? "Unable to save theme");
-        }
-
-        // Save sections - compare with initial and make necessary API calls
-        const sectionsToSave = localSections;
-        const savedSections: Section[] = [];
-        
-        for (const section of sectionsToSave) {
-          if (section.id.startsWith('temp-')) {
-            // New section - create it
-            const response = await fetch(`/api/companies/${slug}/sections`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: section.title,
-                slug: section.slug,
-                summary: section.summary,
-                content: section.content,
-                sortOrder: section.sortOrder,
-              }),
-            });
+        const [themeData, ...sectionResults] = await Promise.all([
+          fetch(`/api/companies/${slug}/theme`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(values),
+          }).then(async (response) => {
             const data = await response.json();
-            if (response.ok) {
-              savedSections.push(data.section);
+            if (!response.ok) {
+              throw new Error(data.error ?? "Unable to save theme");
             }
-          } else {
-            // Existing section - update it
-            const response = await fetch(`/api/companies/${slug}/sections/${section.id}`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: section.title,
-                slug: section.slug,
-                summary: section.summary,
-                content: section.content,
-                sortOrder: section.sortOrder,
-              }),
-            });
-            const data = await response.json();
-            if (response.ok) {
-              savedSections.push(data.section);
+            return data;
+          }),
+          
+          ...localSections.map((section) => {
+            if (section.id.startsWith('temp-')) {
+              return fetch(`/api/companies/${slug}/sections`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: section.title,
+                  slug: section.slug,
+                  summary: section.summary,
+                  content: section.content,
+                  sortOrder: section.sortOrder,
+                }),
+              }).then(async (response) => {
+                const data = await response.json();
+                return response.ok ? data.section : null;
+              });
+            } else {
+              return fetch(`/api/companies/${slug}/sections/${section.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: section.title,
+                  slug: section.slug,
+                  summary: section.summary,
+                  content: section.content,
+                  sortOrder: section.sortOrder,
+                }),
+              }).then(async (response) => {
+                const data = await response.json();
+                return response.ok ? data.section : null;
+              });
             }
-          }
-        }
+          }),
+        ]);
 
-        // Delete sections that were removed
+        const savedSections = sectionResults.filter(Boolean) as Section[];
+
         const initialSectionIds = initialSections.map(s => s.id);
         const localSectionIds = localSections.map(s => s.id);
         const deletedIds = initialSectionIds.filter(id => !localSectionIds.includes(id));
         
-        for (const id of deletedIds) {
-          await fetch(`/api/companies/${slug}/sections/${id}`, {
-            method: "DELETE",
-          });
+        if (deletedIds.length > 0) {
+          await Promise.all(
+            deletedIds.map((id) =>
+              fetch(`/api/companies/${slug}/sections/${id}`, {
+                method: "DELETE",
+              })
+            )
+          );
         }
 
         onUpdated(themeData.company, savedSections);
         
-        // Update local sections with the saved sections (which have real IDs from the database)
         setLocalSections(savedSections);
         
-        // Clear unsaved changes from localStorage after successful save
         localStorage.removeItem(`preview-theme-${slug}`);
         localStorage.removeItem(`preview-sections-${slug}`);
         
@@ -223,14 +213,12 @@ export function ThemeDesigner({
   };
 
   const handlePreviewChanges = () => {
-    // Open preview in new tab - it will read from sessionStorage
     window.open(`/${slug}/preview`, "_blank");
     toast.info("Preview opened", {
       description: "Showing your unsaved changes",
     });
   };
 
-  // Section management functions
   const addSection = () => {
     const tempId = `temp-${Date.now()}`;
     const slug = newSection.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -264,7 +252,6 @@ export function ThemeDesigner({
     const [moved] = reordered.splice(index, 1);
     reordered.splice(newIndex, 0, moved);
 
-    // Update sortOrder
     const updated = reordered.map((section, idx) => ({
       ...section,
       sortOrder: idx * 10,
@@ -277,7 +264,6 @@ export function ThemeDesigner({
 
   return (
     <div className="space-y-8">
-      {/* Header with Actions */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Edit Career Page</h1>
@@ -313,7 +299,6 @@ export function ThemeDesigner({
         </div>
       </div>
 
-      {/* Brand Identity Section */}
       <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center gap-3">
@@ -328,7 +313,6 @@ export function ThemeDesigner({
         </CardHeader>
         <CardContent className="pt-8">
           <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-            {/* Hero Content */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="h-4 w-4 text-slate-500" />
@@ -356,7 +340,6 @@ export function ThemeDesigner({
               </div>
             </div>
 
-            {/* Mission & Story */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="h-4 w-4 text-slate-500" />
@@ -386,7 +369,6 @@ export function ThemeDesigner({
               </div>
             </div>
 
-            {/* Company Details */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Link2 className="h-4 w-4 text-slate-500" />
@@ -423,7 +405,6 @@ export function ThemeDesigner({
               </div>
             </div>
 
-            {/* Media Assets */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Image className="h-4 w-4 text-slate-500" />
@@ -460,7 +441,6 @@ export function ThemeDesigner({
               </div>
             </div>
 
-            {/* Color Palette */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Palette className="h-4 w-4 text-slate-500" />
@@ -493,7 +473,6 @@ export function ThemeDesigner({
         </CardContent>
       </Card>
 
-      {/* Content Sections */}
       <Card className="border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
@@ -533,7 +512,7 @@ export function ThemeDesigner({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700">Summary (optional)</Label>
+                    <Label className="text-sm font-medium text-slate-700">Summary</Label>
                     <Input
                       value={newSection.summary}
                       onChange={(e) =>
@@ -564,7 +543,7 @@ export function ThemeDesigner({
                   <div className="flex gap-3 pt-2">
                     <Button 
                       onClick={addSection} 
-                      disabled={!newSection.title || !newSection.content}
+                      disabled={!newSection.title || !newSection.summary || !newSection.content}
                       className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     >
                       Create Section
@@ -655,7 +634,6 @@ export function ThemeDesigner({
         </CardContent>
       </Card>
 
-      {/* Save Reminder */}
       <div className="rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-6">
         <div className="flex items-start gap-4">
           <div className="p-2 rounded-lg bg-amber-100">

@@ -5,6 +5,8 @@ import { authorizeApiCompany } from "@/lib/auth/api";
 import { jobCreateSchema } from "@/lib/validators/job";
 import { slugify } from "@/lib/strings";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string }>;
 };

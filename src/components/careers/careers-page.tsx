@@ -147,7 +147,6 @@ export function CareersPage({
               },
             ].filter((item): item is InfoItem => Boolean(item));
 
-            // Only render this section if there are items to display
             if (infoItems.length === 0) return null;
 
             return (

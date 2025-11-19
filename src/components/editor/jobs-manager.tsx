@@ -355,7 +355,14 @@ export function JobsManager({ slug, jobs, onChange }: JobsManagerProps) {
               
               <div className="flex gap-3 pt-2">
                 <Button 
-                  disabled={isPending} 
+                  disabled={
+                    isPending || 
+                    !newJob.title || 
+                    !newJob.location || 
+                    !newJob.description || 
+                    !newJob.applyUrl || 
+                    !newJob.salaryRange
+                  } 
                   onClick={createJob}
                   className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 >

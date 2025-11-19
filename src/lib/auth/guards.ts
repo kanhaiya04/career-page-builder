@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "./session";
 
@@ -10,16 +11,20 @@ export async function requireRecruiterSession() {
   return session;
 }
 
+const getCachedCompany = cache(async (slug: string) => {
+  return prisma.company.findUnique({
+    where: { slug },
+    select: { id: true, name: true, slug: true },
+  });
+});
+
 export async function requireCompanyEditor(slug: string) {
   const session = await getSession();
   if (!session) {
     redirect(`/login?next=/${slug}/edit`);
   }
 
-  const company = await prisma.company.findUnique({
-    where: { slug },
-    select: { id: true, name: true, slug: true },
-  });
+  const company = await getCachedCompany(slug);
 
   if (!company) {
     notFound();
@@ -38,10 +43,7 @@ export async function requireCompanyPreview(slug: string) {
     redirect(`/login?next=/${slug}/preview`);
   }
 
-  const company = await prisma.company.findUnique({
-    where: { slug },
-    select: { id: true, slug: true, name: true },
-  });
+  const company = await getCachedCompany(slug);
 
   if (!company) {
     notFound();

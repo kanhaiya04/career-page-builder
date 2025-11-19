@@ -6,6 +6,8 @@ import {
 } from "@/lib/validators/section";
 import { slugify } from "@/lib/strings";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string }>;
 };
@@ -20,7 +22,7 @@ export async function GET(request: Request, { params }: Params) {
 
   const sections = await prisma.section.findMany({
     where: {
-      company: { slug },
+      companyId: auth.company.id,
     },
     orderBy: { sortOrder: "asc" },
   });
@@ -52,9 +54,7 @@ export async function POST(request: Request, { params }: Params) {
       summary,
       content,
       sortOrder: sortOrder ?? 100,
-      company: {
-        connect: { slug },
-      },
+      companyId: auth.company.id,
     },
   });
 

@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, Palette, Sparkles, TabletSmartphone } from "lucide-react";
+import { getSession } from "@/lib/auth/session";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 const features = [
   {
@@ -22,7 +27,18 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+  if (session) {
+    const company = await prisma.company.findUnique({
+      where: { id: session.companyId },
+      select: { slug: true },
+    });
+    if (company) {
+      redirect(`/${company.slug}/edit`);
+    }
+  }
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-24 sm:pt-32 lg:gap-20 lg:px-10">
       <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
@@ -36,10 +52,9 @@ export default function Home() {
             into applicants.
           </h1>
           <p className="text-lg text-slate-600">
-            This reference implementation for the Whitecarrot ATS assignment
-            bundles a multi-tenant content model, recruiter editor, and a
-            delightful public browsing experience—ready to deploy on Vercel +
-            PostgreSQL.
+            A modern, multi-tenant ATS platform with powerful recruiter tools
+            and beautiful candidate-facing career pages. Built for scale with
+            Next.js, Prisma, and PostgreSQL.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
@@ -54,12 +69,6 @@ export default function Home() {
               className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-slate-800 transition hover:bg-slate-50"
             >
               Create a workspace
-            </Link>
-            <Link
-              href="/acme/careers"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 px-6 py-3 text-slate-800 transition hover:bg-slate-50"
-            >
-              View sample company
             </Link>
           </div>
         </div>

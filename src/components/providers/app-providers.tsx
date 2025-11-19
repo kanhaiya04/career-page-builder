@@ -14,9 +14,12 @@ export function AppProviders({ children }: AppProvidersProps) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 1000 * 60,
+            staleTime: 1000 * 60 * 5,
+            gcTime: 1000 * 60 * 10,
             refetchOnWindowFocus: false,
             retry: 1,
+            refetchOnMount: false,
+            placeholderData: (previousData: any) => previousData,
           },
           mutations: {
             retry: 1,

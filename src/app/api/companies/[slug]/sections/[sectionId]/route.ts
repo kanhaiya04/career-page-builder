@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { authorizeApiCompany } from "@/lib/auth/api";
 import { sectionUpdateSchema } from "@/lib/validators/section";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string; sectionId: string }>;
 };

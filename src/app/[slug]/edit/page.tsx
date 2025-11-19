@@ -3,6 +3,8 @@ import { requireCompanyEditor } from "@/lib/auth/guards";
 import { getCompanyForEditor } from "@/lib/data/company";
 import { EditorShell } from "@/components/editor/editor-shell";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string }>;
 };

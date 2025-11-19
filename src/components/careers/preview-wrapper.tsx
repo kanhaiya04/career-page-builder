@@ -6,7 +6,6 @@ import { CareersPage } from "./careers-page";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Form values type (before zod transformations)
 type ThemeFormValues = {
   headline: string;
   subheadline?: string;
@@ -61,7 +60,6 @@ export function PreviewWrapper({
   });
 
   const loadPreviewData = useCallback(() => {
-    // Try to load unsaved changes from localStorage (shared across tabs)
     const themeKey = `preview-theme-${slug}`;
     const sectionsKey = `preview-sections-${slug}`;
     
@@ -72,7 +70,6 @@ export function PreviewWrapper({
     let updatedCompany = initialCompany;
     let updatedSections = initialSections;
 
-    // Apply theme changes if available
     if (storedTheme) {
       try {
         const unsavedTheme: ThemeFormValues = JSON.parse(storedTheme);
@@ -110,7 +107,6 @@ export function PreviewWrapper({
       }
     }
 
-    // Apply sections changes if available
     if (storedSections) {
       try {
         const unsavedSections: Section[] = JSON.parse(storedSections);

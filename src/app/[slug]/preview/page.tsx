@@ -4,6 +4,8 @@ import { getCompanyForEditor } from "@/lib/data/company";
 import { PreviewWrapper } from "@/components/careers/preview-wrapper";
 import { filterJobs } from "@/lib/jobs";
 
+export const dynamic = "force-dynamic";
+
 type Params = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { signupSchema } from "@/lib/validators/auth";
 import { slugify } from "@/lib/strings";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: Request) {
   const payload = await request.json().catch(() => null);
   const parsed = signupSchema.safeParse(payload);
