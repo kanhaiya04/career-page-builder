@@ -46,7 +46,6 @@ export async function PATCH(request: Request, { params }: Params) {
     website,
     sizeRange,
     industries,
-    showSalary,
     theme,
   } = parsed.data;
 
@@ -71,7 +70,6 @@ export async function PATCH(request: Request, { params }: Params) {
         website: website ?? null,
         sizeRange: sizeRange ?? null,
         industries,
-        showSalary,
       },
       select: { id: true },
     });

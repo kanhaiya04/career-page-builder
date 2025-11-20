@@ -33,7 +33,6 @@ type ThemeFormValues = {
   website?: string;
   sizeRange?: string;
   industries?: string[];
-  showSalary?: boolean;
   theme: {
     primaryColor: string;
     secondaryColor: string;
@@ -82,7 +81,6 @@ export function ThemeDesigner({
       website: company.website ?? undefined,
       sizeRange: company.sizeRange ?? undefined,
       industries: company.industries ?? [],
-      showSalary: company.showSalary,
       theme: {
         primaryColor: theme?.primaryColor ?? "#0f172a",
         secondaryColor: theme?.secondaryColor ?? "#10b981",

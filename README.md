@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Career Page Builder
 
-## Getting Started
+A platform for recruiters to build and customize their company's careers page. Create branded pages, manage job postings, and publish everything with a simple editor.
 
-First, run the development server:
+## What's Built
 
+- **Custom career pages** - Each company gets a unique page at `/[slug]/careers`
+- **Theme editor** - Customize colors, logos, banners, and branding
+- **Job management** - Create, edit, and publish job postings with filters
+- **Content sections** - Add custom content blocks that can be reordered
+- **Preview mode** - See changes before publishing (saved to localStorage)
+- **Auth system** - Passcode-based login for recruiters with role-based access
+
+Built with Next.js, Prisma, PostgreSQL, and shadcn/ui.
+
+## How to Run
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set up your database. Add a `.env` file with:
+```
+DATABASE_URL="your-postgres-connection-string"
+DIRECT_URL="your-direct-connection-string"
+JWT_SECRET="your-secret-key"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run migrations:
+```bash
+npm run db:push
+npm run db:generate
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the dev server:
+```bash
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to get started.
 
-To learn more about Next.js, take a look at the following resources:
+## User Guide
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### First Time Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Go to `/signup` and create a recruiter account
+2. Fill in your company details (name, slug, headline, etc.)
+3. You'll be redirected to the editor at `/[your-slug]/edit`
 
-## Deploy on Vercel
+### Customizing Your Page
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Theme tab** - Set your brand colors, upload logo and banner images
+2. **Sections tab** - Add content blocks (About, Culture, Benefits, etc.). Drag to reorder
+3. **Jobs tab** - Create job postings. Set status to DRAFT or PUBLISHED
+4. **Preview tab** - Click to see how your page looks at `/[slug]/careers`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Publishing Jobs
+
+- Jobs with status `PUBLISHED` appear on the public careers page
+- `DRAFT` jobs are only visible in the editor
+- Use filters on the public page to find jobs by department, location, or type
+
+### Preview Changes
+
+Changes in the editor are saved to localStorage. Use the preview page to see them before hitting save. The preview shows unsaved changes that won't appear on the live site until you save.
+
+## Improvement Plan
+
+- [ ] Image upload/management instead of URL inputs
+- [ ] Analytics dashboard for job views and applications
+- [ ] End to end testing for application
+- [ ] Integration with ATS systems
+- [ ] Multi-language support

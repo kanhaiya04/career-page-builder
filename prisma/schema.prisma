@@ -18,12 +18,10 @@ model Company {
   mission       String?
   headquarters  String?
   website       String?
-  sizeRange     String?
+  sizeRange     String? 
   industries    String[]
   perks         Json?
   values        Json?
-  showSalary    Boolean     @default(true)
-  previewToken  String      @default(uuid())
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   recruiters    Recruiter[]

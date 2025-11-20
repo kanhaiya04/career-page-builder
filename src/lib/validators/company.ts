@@ -33,7 +33,6 @@ export const themeUpdateSchema = z.object({
   website: urlOrEmpty,
   sizeRange: emptyToUndefined,
   industries: z.array(z.string()).optional().default([]),
-  showSalary: z.boolean().default(true),
   theme: z.object({
     primaryColor: z.string().min(4),
     secondaryColor: z.string().min(4),

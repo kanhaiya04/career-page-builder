@@ -5,7 +5,6 @@ import { CareersPage } from "@/components/careers/careers-page";
 import { filterJobs } from "@/lib/jobs";
 
 export const revalidate = 60;
-export const dynamic = "force-static";
 export const dynamicParams = true;
 
 type Params = {

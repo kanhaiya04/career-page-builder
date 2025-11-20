@@ -51,7 +51,6 @@ export async function POST(request: Request) {
       subheadline:
         subheadline ??
         "Tell your story, highlight your benefits, and make it easy to browse jobs.",
-      showSalary: true,
       theme: {
         create: {
           primaryColor: "#0f172a",

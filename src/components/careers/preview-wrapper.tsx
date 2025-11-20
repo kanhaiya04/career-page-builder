@@ -15,7 +15,6 @@ type ThemeFormValues = {
   website?: string;
   sizeRange?: string;
   industries?: string[];
-  showSalary?: boolean;
   theme: {
     primaryColor: string;
     secondaryColor: string;
@@ -84,7 +83,6 @@ export function PreviewWrapper({
           website: unsavedTheme.website || null,
           sizeRange: unsavedTheme.sizeRange || null,
           industries: unsavedTheme.industries ?? [],
-          showSalary: unsavedTheme.showSalary ?? true,
           theme: {
             id: initialCompany.theme?.id ?? "",
             companyId: initialCompany.id,
